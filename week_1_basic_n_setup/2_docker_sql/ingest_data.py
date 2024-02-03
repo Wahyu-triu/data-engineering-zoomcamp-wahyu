@@ -34,17 +34,20 @@ def main(params):
 
     df.to_sql(con=engine, name=table_name, if_exists='append')
 
-    while True:
-        t_start = time()
-        df = next(df_iter)
-        
-        df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
-        df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
-        
-        df.to_sql(con=engine, name=table_name, if_exists='append')
-        t_end = time()
-        
-        print('inserted another chunk..., took %.3f seconds' %(t_end - t_start))
+    try:
+        while True:
+            t_start = time()
+            df = next(df_iter)
+            
+            df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
+            df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
+            
+            df.to_sql(con=engine, name=table_name, if_exists='append')
+            t_end = time()
+            
+            print('inserted another chunk..., took %.3f seconds' %(t_end - t_start))
+    except:
+        print('there is no data left, ingesting done!')
 
 
 if __name__ == '__main__':
